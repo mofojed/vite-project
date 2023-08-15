@@ -1,6 +1,9 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import { polyfillNode } from "esbuild-plugin-polyfill-node";
+// This was suggested on Stackoverflow: https://stackoverflow.com/a/74123844/3448018
+import { NodeGlobalsPolyfillPlugin } from "@esbuild-plugins/node-globals-polyfill";
+import { NodeModulesPolyfillPlugin } from "@esbuild-plugins/node-modules-polyfill";
+import rollupNodePolyFill from "rollup-plugin-polyfill-node";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -11,17 +14,17 @@ export default defineConfig({
         global: "globalThis",
       },
       plugins: [
-        polyfillNode({
-          globals: {
-            buffer: true,
-            process: true,
-          },
-          polyfills: {
-            buffer: true,
-            process: true,
-          },
+        NodeGlobalsPolyfillPlugin({
+          buffer: true,
+          process: true,
         }),
+        NodeModulesPolyfillPlugin(),
       ],
+    },
+  },
+  build: {
+    rollupOptions: {
+      plugins: [rollupNodePolyFill()],
     },
   },
   plugins: [react()],
